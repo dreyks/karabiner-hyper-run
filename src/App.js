@@ -1,18 +1,30 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Navbar, Panel, Button } from 'react-bootstrap';
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+        <Navbar inverse={true}>
+          <Navbar.Header>
+            <Navbar.Brand><a href="/">Karabiner-Elements hyper-run</a></Navbar.Brand>
+          </Navbar.Header>
+        </Navbar>
+        <div className="container">
+          <div className="text-right">
+            <a href="https://github.com/dreyks/karabiner-hyper-run">Github</a>
+          </div>
         </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+        <Panel header={<h3>Use hyper key to run apps</h3>}>
+          <ul>
+            {
+              Object.entries(this.props.apps || {}).map((key, app) => (
+                <li>Change hyper + {key} to run {app}</li>
+              ))
+            }
+          </ul>
+          <Button href="karabiner://karabiner/assets/complex_modifications/import?url=.json" bsStyle="primary">Import</Button>
+        </Panel>
       </div>
     );
   }

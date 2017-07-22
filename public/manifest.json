@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Karabiner hyper-run",
+  "name": "Generate rules for running apps with Karabiner-Elements",
   "icons": [
     {
       "src": "favicon.ico",
