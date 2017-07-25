@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Navbar, Panel, Button } from 'react-bootstrap';
 
+import 'bootstrap-css-only';
+
 class App extends Component {
   render() {
     return (
