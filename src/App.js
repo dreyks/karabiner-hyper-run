@@ -9,18 +9,21 @@ import {
   ControlLabel,
   Row,
   Col,
-  Grid,
+  Grid
 } from 'react-bootstrap'
 
 import 'bootstrap-css-only'
 
 const GITHUB_REPO_URL = 'https://github.com/dreyks/karabiner-hyper-run'
+const KARABINER_IMPORT_URL = 'karabiner://karabiner/assets/complex_modifications/import?url='
 const EMPTY_MAPPING = { hotkey: '', app: '' }
 
 class App extends Component {
   state = {
-    keyMappings: [{ hotkey: '', app: '' }],
+    keyMappings: [{ hotkey: '', app: '' }]
   }
+
+  filename = `${(Math.random() + 1).toString(36).substring(2)}.json`
 
   render() {
     return (
@@ -44,6 +47,7 @@ class App extends Component {
           <Row>
             {this.renderPanel()}
           </Row>
+          {this.renderDebug()}
         </Grid>
       </div>
     )
@@ -68,8 +72,8 @@ class App extends Component {
   renderFormItem(hotkey, app, idx) {
     return (
       <FormGroup key={idx}>
-        <Col sm={2}><FormControl type="text" value={hotkey} onChange={this.edit(idx, 'hotkey')}/></Col>
-        <Col sm={9}><FormControl type="text" value={app} onChange={this.edit(idx, 'app')}/></Col>
+        <Col sm={2}><FormControl type="text" value={hotkey} onChange={this.onEditClick(idx, 'hotkey')}/></Col>
+        <Col sm={9}><FormControl type="text" value={app} onChange={this.onEditClick(idx, 'app')}/></Col>
       </FormGroup>
     )
   }
@@ -86,12 +90,22 @@ class App extends Component {
               ))
           }
         </ul>
-        <Button onClick="karabiner://karabiner/assets/complex_modifications/import?url=.json" bsStyle="primary">Import</Button>
+        <Button onClick={this.onImportClick} bsStyle="primary">Import</Button>
       </Panel>
     )
   }
 
-  edit = (index, field) => (evt) => {
+  renderDebug() {
+    if (process.env.NODE_ENV === 'production') return
+
+    return (
+      <Row>
+        <pre>{this.generateJSON(true)}</pre>
+      </Row>
+    )
+  }
+
+  onEditClick = (index, field) => (evt) => {
     let value = evt.target.value
     if ('hotkey' === field && value.length > 1) {
       value = value.slice(-1)
@@ -112,12 +126,84 @@ class App extends Component {
     this.setState({ keyMappings: newMappings })
   }
 
+  onImportClick = async () => {
+    const started = this.state.keyMappings.filter(this.isMappingStarted)
+    if (!(started.length && started.every(this.isMappingFinished))) return //TODO: show error
+
+    const file = await this.saveFile(this.generateJSON()) //TODO: check for save errors and notify
+    const jsonUrl = file.files[this.filename].raw_url
+
+    window.location.href = `${KARABINER_IMPORT_URL}${encodeURIComponent(jsonUrl)}`
+
+    setTimeout(() => this.deleteFile(file.id), 2000)
+  }
+
   isMappingFinished({ hotkey, app }) {
     return hotkey && app
   }
 
   isMappingStarted({ hotkey, app }) {
     return hotkey || app
+  }
+
+  generateJSON(pretty = false) {
+    const json = {
+      'title': 'Launch apps by hyper+letters.',
+      'rules': this.state.keyMappings.filter(this.isMappingFinished).map(this.mapToRule)
+    }
+
+    return JSON.stringify(json, null, pretty ? 2 : null)
+  }
+
+  mapToRule({ hotkey, app }) {
+    return {
+      description: `hyper + ${hotkey} for ${app}`,
+      manipulators: [
+        {
+          type: 'basic',
+          from: {
+            key_code: hotkey,
+            modifiers: {
+              mandatory: [
+                'control',
+                'command',
+                'option',
+                'shift'
+              ]
+            }
+          },
+          to: [
+            {
+              shell_command: `open '/Applications/${app}.app'`
+            }
+          ]
+        }
+      ]
+    }
+  }
+
+  async saveFile(content) {
+    const response = await fetch(
+      'https://api.github.com/gists',
+      {
+        method: 'POST',
+        body: JSON.stringify(
+          {
+            'files': {
+              [this.filename]: {
+                'content': content
+              }
+            }
+          }
+        )
+      }
+    )
+
+    return await response.json()
+  }
+
+  deleteFile(id) {
+    fetch(`https://api.github.com/gists/${id}`, { method: 'DELETE' })
   }
 }
 
