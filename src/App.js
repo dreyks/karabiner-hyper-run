@@ -15,6 +15,7 @@ import {
 import 'bootstrap-css-only'
 
 const GITHUB_REPO_URL = 'https://github.com/dreyks/KE-hyper-run'
+const KARABINER_URL = 'https://github.com/tekezo/Karabiner-Elements'
 const KARABINER_IMPORT_URL = 'karabiner://karabiner/assets/complex_modifications/import?url='
 const EMPTY_MAPPING = { hotkey: '', app: '' }
 
@@ -28,7 +29,9 @@ class App extends Component {
       <div className="App">
         <Navbar inverse={true}>
           <Navbar.Header>
-            <Navbar.Brand><a href="/">Karabiner-Elements hyper-run</a></Navbar.Brand>
+            <Navbar.Brand>
+              <a href={KARABINER_URL} target="_blank" rel="noopener noreferrer">Karabiner-Elements hyper-run</a>
+            </Navbar.Brand>
           </Navbar.Header>
         </Navbar>
         <Grid>

@@ -1,10 +1,11 @@
 {
   "name": "KE-hyper-run",
-  "homepage" : "http://dreyks.github.io/KE-hyper-run",
+  "homepage": "http://dreyks.github.io/KE-hyper-run",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {
+  "devDependencies": {
     "bootstrap-css-only": "^3.3.7",
+    "gh-pages": "^1.0.0",
     "react": "^15.6.1",
     "react-bootstrap": "^0.31.1",
     "react-dom": "^15.6.1",
@@ -13,6 +14,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   }
