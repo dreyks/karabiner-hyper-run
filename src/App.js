@@ -23,8 +23,6 @@ class App extends Component {
     keyMappings: [{ hotkey: '', app: '' }]
   }
 
-  filename = `${(Math.random() + 1).toString(36).substring(2)}.json`
-
   render() {
     return (
       <div className="App">
@@ -127,15 +125,12 @@ class App extends Component {
   }
 
   onImportClick = async () => {
-    const started = this.state.keyMappings.filter(this.isMappingStarted)
-    if (!(started.length && started.every(this.isMappingFinished))) return //TODO: show error
+    if (!this.validateMappings()) return //TODO: show error
 
-    const file = await this.saveFile(this.generateJSON()) //TODO: check for save errors and notify
-    const jsonUrl = file.files[this.filename].raw_url
+    const jsonUrl = await this.saveFile(this.generateJSON())
+    if (!jsonUrl) return //TODO: show error
 
     window.location.href = `${KARABINER_IMPORT_URL}${encodeURIComponent(jsonUrl)}`
-
-    setTimeout(() => this.deleteFile(file.id), 2000)
   }
 
   isMappingFinished({ hotkey, app }) {
@@ -144,6 +139,11 @@ class App extends Component {
 
   isMappingStarted({ hotkey, app }) {
     return hotkey || app
+  }
+
+  validateMappings() {
+    const started = this.state.keyMappings.filter(this.isMappingStarted)
+    return started.length && started.every(this.isMappingFinished)
   }
 
   generateJSON(pretty = false) {
@@ -155,8 +155,8 @@ class App extends Component {
     return JSON.stringify(json, null, pretty ? 2 : null)
   }
 
-  mapToRule({ hotkey, app }) {
-    return {
+  mapToRule = ({ hotkey, app }) => (
+    {
       description: `hyper + ${hotkey} for ${app}`,
       manipulators: [
         {
@@ -180,30 +180,25 @@ class App extends Component {
         }
       ]
     }
-  }
+  )
 
   async saveFile(content) {
+    const file = new Blob([content], { type: 'text/plain' })
+    const data = new FormData()
+    data.append('file', file)
+
     const response = await fetch(
-      'https://api.github.com/gists',
+      'https://file.io',
       {
         method: 'POST',
-        body: JSON.stringify(
-          {
-            'files': {
-              [this.filename]: {
-                'content': content
-              }
-            }
-          }
-        )
+        body: data
       }
     )
 
-    return await response.json()
-  }
+    const json = await response.json()
+    if (!json.success) return false
 
-  deleteFile(id) {
-    fetch(`https://api.github.com/gists/${id}`, { method: 'DELETE' })
+    return `https://file.io/${json.key}`
   }
 }
 
