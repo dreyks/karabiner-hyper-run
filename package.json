@@ -1,5 +1,6 @@
 {
-  "name": "karabiner-hyper-run",
+  "name": "KE-hyper-run",
+  "homepage" : "http://dreyks.github.io/KE-hyper-run",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
