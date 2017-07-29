@@ -11,6 +11,7 @@ import 'bootstrap-css-only'
 import Debug from './components/Debug'
 import ResultsPanel from './components/ResultsPanel'
 import MappingsForm from './components/MappingsForm'
+import validate, { isMappingStarted, isMappingFinished } from './utils/validateMappings'
 
 const GITHUB_REPO_URL = 'https://github.com/dreyks/karabiner-hyper-run'
 const KARABINER_URL = 'https://github.com/tekezo/Karabiner-Elements'
@@ -45,7 +46,7 @@ class App extends Component {
           </Row>
           <Row>
             <ResultsPanel
-              keyMappings={this.state.keyMappings.filter(this.isMappingFinished)}
+              keyMappings={this.state.keyMappings.filter(isMappingFinished)}
               onImportClick={this.onImportClick}
             />
           </Row>
@@ -67,9 +68,9 @@ class App extends Component {
       } else {
         return { ...mapping, [field]: value }
       }
-    }).filter(this.isMappingStarted)
+    }).filter(isMappingStarted)
 
-    if (newMappings.every(this.isMappingFinished)) {
+    if (newMappings.every(isMappingFinished)) {
       newMappings.push(EMPTY_MAPPING)
     }
 
@@ -77,7 +78,7 @@ class App extends Component {
   }
 
   onImportClick = async () => {
-    if (!this.validateMappings()) return //TODO: show error
+    if (!validate(this.state.keyMappings)) return //TODO: show error
 
     const jsonUrl = await this.saveFile(this.generateJSON())
     if (!jsonUrl) return //TODO: show error
@@ -85,23 +86,10 @@ class App extends Component {
     window.location.href = `${KARABINER_IMPORT_URL}${encodeURIComponent(jsonUrl)}`
   }
 
-  isMappingFinished({ hotkey, app }) {
-    return hotkey && app
-  }
-
-  isMappingStarted({ hotkey, app }) {
-    return hotkey || app
-  }
-
-  validateMappings() {
-    const started = this.state.keyMappings.filter(this.isMappingStarted)
-    return started.length && started.every(this.isMappingFinished)
-  }
-
   generateJSON(pretty = false) {
     const json = {
       'title': 'Launch apps by hyper+letters.',
-      'rules': this.state.keyMappings.filter(this.isMappingFinished).map(this.mapToRule)
+      'rules': this.state.keyMappings.filter(isMappingFinished).map(this.mapToRule)
     }
 
     return JSON.stringify(json, null, pretty ? 2 : null)
