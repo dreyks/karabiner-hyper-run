@@ -1,10 +1,6 @@
 import React, { Component } from 'react'
 import {
   Navbar,
-  Form,
-  FormGroup,
-  FormControl,
-  ControlLabel,
   Row,
   Col,
   Grid
@@ -13,6 +9,7 @@ import {
 import 'bootstrap-css-only'
 
 import ResultsPanel from './components/ResultsPanel'
+import MappingsForm from './components/MappingsForm'
 
 const GITHUB_REPO_URL = 'https://github.com/dreyks/karabiner-hyper-run'
 const KARABINER_URL = 'https://github.com/tekezo/Karabiner-Elements'
@@ -42,7 +39,7 @@ class App extends Component {
           </Row>
           <Row>
             <Col sm={6}>
-              {this.renderForm()}
+              <MappingsForm keyMappings={this.state.keyMappings} onEdit={this.onEditMapping} />
             </Col>
           </Row>
           <Row>
@@ -57,31 +54,6 @@ class App extends Component {
     )
   }
 
-  renderForm() {
-    return (
-      <Form horizontal>
-        <FormGroup>
-          <Col sm={2}><ControlLabel>Key</ControlLabel></Col>
-          <Col sm={10}><ControlLabel>App</ControlLabel></Col>
-        </FormGroup>
-        {
-          this.state.keyMappings.map(({ hotkey, app }, idx) => (
-            this.renderFormItem(hotkey, app, idx)
-          ))
-        }
-      </Form>
-    )
-  }
-
-  renderFormItem(hotkey, app, idx) {
-    return (
-      <FormGroup key={idx}>
-        <Col sm={2}><FormControl type="text" value={hotkey} onChange={this.onEditClick(idx, 'hotkey')} /></Col>
-        <Col sm={9}><FormControl type="text" value={app} onChange={this.onEditClick(idx, 'app')} /></Col>
-      </FormGroup>
-    )
-  }
-
   renderDebug() {
     if (process.env.NODE_ENV === 'production') return
 
@@ -92,7 +64,7 @@ class App extends Component {
     )
   }
 
-  onEditClick = (index, field) => (evt) => {
+  onEditMapping = (index, field) => (evt) => {
     let value = evt.target.value
     if ('hotkey' === field && value.length > 1) {
       value = value.slice(-1)
