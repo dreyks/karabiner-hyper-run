@@ -8,6 +8,7 @@ import {
 
 import 'bootstrap-css-only'
 
+import Debug from './components/Debug'
 import ResultsPanel from './components/ResultsPanel'
 import MappingsForm from './components/MappingsForm'
 
@@ -48,19 +49,9 @@ class App extends Component {
               onImportClick={this.onImportClick}
             />
           </Row>
-          {this.renderDebug()}
+          <Row><Debug data={() => this.generateJSON(true)} /></Row>
         </Grid>
       </div>
-    )
-  }
-
-  renderDebug() {
-    if (process.env.NODE_ENV === 'production') return
-
-    return (
-      <Row>
-        <pre>{this.generateJSON(true)}</pre>
-      </Row>
     )
   }
 
