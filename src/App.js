@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import {
   Navbar,
-  Panel,
-  Button,
   Form,
   FormGroup,
   FormControl,
@@ -13,6 +11,8 @@ import {
 } from 'react-bootstrap'
 
 import 'bootstrap-css-only'
+
+import ResultsPanel from './components/ResultsPanel'
 
 const GITHUB_REPO_URL = 'https://github.com/dreyks/karabiner-hyper-run'
 const KARABINER_URL = 'https://github.com/tekezo/Karabiner-Elements'
@@ -46,7 +46,10 @@ class App extends Component {
             </Col>
           </Row>
           <Row>
-            {this.renderPanel()}
+            <ResultsPanel
+              keyMappings={this.state.keyMappings.filter(this.isMappingFinished)}
+              onImportClick={this.onImportClick}
+            />
           </Row>
           {this.renderDebug()}
         </Grid>
@@ -73,26 +76,9 @@ class App extends Component {
   renderFormItem(hotkey, app, idx) {
     return (
       <FormGroup key={idx}>
-        <Col sm={2}><FormControl type="text" value={hotkey} onChange={this.onEditClick(idx, 'hotkey')}/></Col>
-        <Col sm={9}><FormControl type="text" value={app} onChange={this.onEditClick(idx, 'app')}/></Col>
+        <Col sm={2}><FormControl type="text" value={hotkey} onChange={this.onEditClick(idx, 'hotkey')} /></Col>
+        <Col sm={9}><FormControl type="text" value={app} onChange={this.onEditClick(idx, 'app')} /></Col>
       </FormGroup>
-    )
-  }
-
-  renderPanel() {
-    return (
-      <Panel header={<h3>Use hyper key to run keyMappings</h3>}>
-        <ul>
-          {
-            this.state.keyMappings
-              .filter(this.isMappingFinished)
-              .map(({ hotkey, app }) => (
-                <li key={hotkey}>Use hyper + {hotkey} to run {app}</li>
-              ))
-          }
-        </ul>
-        <Button onClick={this.onImportClick} bsStyle="primary">Import</Button>
-      </Panel>
     )
   }
 
