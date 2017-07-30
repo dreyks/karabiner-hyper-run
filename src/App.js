@@ -28,6 +28,8 @@ class App extends Component {
   storage = new Storage()
 
   render() {
+    const debugInfo = <Debug data={() => JSONGenerator.render(this.state.mappings, { pretty: 2 })} />
+    
     return (
       <div className="App">
         <Navbar inverse={true}>
@@ -54,7 +56,7 @@ class App extends Component {
               onImportClick={this.onImportClick}
             />
           </Row>
-          <Row><Debug data={() => JSONGenerator.render(this.state.mappings, { pretty: 2 })} /></Row>
+          {debugInfo && <Row>{debugInfo}</Row>}
         </Grid>
       </div>
     )
