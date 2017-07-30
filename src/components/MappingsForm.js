@@ -10,18 +10,18 @@ export default class MappingsForm extends PureComponent {
           <Col sm={10}><ControlLabel>App</ControlLabel></Col>
         </FormGroup>
         {
-          this.props.keyMappings.map(({ hotkey, app }, idx) => (
-            this.renderItem(hotkey, app, idx)
+          this.props.mappings.map(({ keyCode, app }, idx) => (
+            this.renderItem(keyCode, app, idx)
           ))
         }
       </Form>
     )
   }
 
-  renderItem(hotkey, app, idx) {
+  renderItem(keyCode, app, idx) {
     return (
       <FormGroup key={idx}>
-        <Col sm={2}><FormControl type="text" value={hotkey} onChange={this.props.onEdit(idx, 'hotkey')} /></Col>
+        <Col sm={2}><FormControl type="text" value={keyCode} onChange={this.props.onEdit(idx, 'keyCode')} /></Col>
         <Col sm={9}><FormControl type="text" value={app} onChange={this.props.onEdit(idx, 'app')} /></Col>
       </FormGroup>
     )

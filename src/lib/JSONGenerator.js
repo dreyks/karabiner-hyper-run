@@ -10,14 +10,14 @@ export default class JSONGenerator {
     return JSON.stringify(json, null, pretty)
   }
 
-  static mapToRule = ({ hotkey, app }) => (
+  static mapToRule = ({ keyCode, app }) => (
     {
-      description: `hyper + ${hotkey} for ${app}`,
+      description: `hyper + ${keyCode} for ${app}`,
       manipulators: [
         {
           type: 'basic',
           from: {
-            key_code: hotkey,
+            key_code: keyCode,
             modifiers: {
               mandatory: [
                 'control',

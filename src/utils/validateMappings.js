@@ -1,5 +1,5 @@
-export const isMappingFinished = ({ hotkey, app }) => hotkey && app
-export const isMappingStarted = ({ hotkey, app }) => hotkey || app
+export const isMappingFinished = ({ keyCode, app }) => keyCode && app
+export const isMappingStarted = ({ keyCode, app }) => keyCode || app
 
 export default (mappings) => {
   const started = mappings.filter(isMappingStarted)

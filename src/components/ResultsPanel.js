@@ -1,13 +1,13 @@
 import React from 'react'
 import { Panel, Button } from 'react-bootstrap'
 
-export default ({ keyMappings, onImportClick }) => (
-  <Panel header={<h3>Use hyper key to run keyMappings</h3>}>
+export default ({ mappings, onImportClick }) => (
+  <Panel header={<h3>Use hyper key to run apps</h3>}>
     <ul>
       {
-        keyMappings
-          .map(({ hotkey, app }) => (
-            <li key={hotkey}>Use hyper + {hotkey} to run {app}</li>
+        mappings
+          .map(({ keyCode, app }) => (
+            <li key={keyCode}>Use hyper + {keyCode} to run {app}</li>
           ))
       }
     </ul>

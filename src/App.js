@@ -18,11 +18,11 @@ import validate, { isMappingStarted, isMappingFinished } from './utils/validateM
 const GITHUB_REPO_URL = 'https://github.com/dreyks/karabiner-hyper-run'
 const KARABINER_URL = 'https://github.com/tekezo/Karabiner-Elements'
 const KARABINER_IMPORT_URL = 'karabiner://karabiner/assets/complex_modifications/import?url='
-const EMPTY_MAPPING = { hotkey: '', app: '' }
+const EMPTY_MAPPING = { keyCode: '', app: '' }
 
 class App extends Component {
   state = {
-    keyMappings: [EMPTY_MAPPING]
+    mappings: [EMPTY_MAPPING]
   }
 
   storage = new Storage()
@@ -45,16 +45,16 @@ class App extends Component {
           </Row>
           <Row>
             <Col sm={6}>
-              <MappingsForm keyMappings={this.state.keyMappings} onEdit={this.onEditMapping} />
+              <MappingsForm mappings={this.state.mappings} onEdit={this.onEditMapping} />
             </Col>
           </Row>
           <Row>
             <ResultsPanel
-              keyMappings={this.state.keyMappings.filter(isMappingFinished)}
+              mappings={this.state.mappings.filter(isMappingFinished)}
               onImportClick={this.onImportClick}
             />
           </Row>
-          <Row><Debug data={() => JSONGenerator.render(this.state.keyMappings, { pretty: 2 })} /></Row>
+          <Row><Debug data={() => JSONGenerator.render(this.state.mappings, { pretty: 2 })} /></Row>
         </Grid>
       </div>
     )
@@ -62,11 +62,11 @@ class App extends Component {
 
   onEditMapping = (index, field) => (evt) => {
     let value = evt.target.value
-    if ('hotkey' === field && value.length > 1) {
+    if ('keyCode' === field && value.length > 1) {
       value = value.slice(-1)
     }
 
-    const newMappings = this.state.keyMappings.map((mapping, idx) => {
+    const newMappings = this.state.mappings.map((mapping, idx) => {
       if (idx !== index) {
         return mapping
       } else {
@@ -78,13 +78,13 @@ class App extends Component {
       newMappings.push(EMPTY_MAPPING)
     }
 
-    this.setState({ keyMappings: newMappings })
+    this.setState({ mappings: newMappings })
   }
 
   onImportClick = async () => {
-    if (!validate(this.state.keyMappings)) return //TODO: show error
+    if (!validate(this.state.mappings)) return //TODO: show error
 
-    const jsonUrl = await this.storage.save(JSONGenerator.render(this.state.keyMappings))
+    const jsonUrl = await this.storage.save(JSONGenerator.render(this.state.mappings))
     if (!jsonUrl) return //TODO: show error
 
     window.location.href = `${KARABINER_IMPORT_URL}${encodeURIComponent(jsonUrl)}`
