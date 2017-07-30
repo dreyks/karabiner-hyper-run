@@ -7,7 +7,7 @@ export default class MappingsForm extends PureComponent {
       <Form horizontal>
         <FormGroup>
           <Col sm={2}><ControlLabel>Key</ControlLabel></Col>
-          <Col sm={10}><ControlLabel>App</ControlLabel></Col>
+          <Col sm={10}><ControlLabel>Full path or application name</ControlLabel></Col>
         </FormGroup>
         {
           this.props.mappings.map(({ keyCode, app }, idx) => (
@@ -22,7 +22,9 @@ export default class MappingsForm extends PureComponent {
     return (
       <FormGroup key={idx}>
         <Col sm={2}><FormControl type="text" value={keyCode} onChange={this.props.onEdit(idx, 'keyCode')} /></Col>
-        <Col sm={9}><FormControl type="text" value={app} onChange={this.props.onEdit(idx, 'app')} /></Col>
+        <Col sm={9}>
+          <FormControl type="text" value={app} onChange={this.props.onEdit(idx, 'app')} />
+        </Col>
       </FormGroup>
     )
   }

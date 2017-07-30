@@ -1,4 +1,5 @@
 import { isMappingFinished } from './utils/validateMappings'
+import resolveAppPath from './utils/resolveAppPath'
 
 export default class JSONGenerator {
   static render(data, { pretty = null } = {}) {
@@ -10,9 +11,11 @@ export default class JSONGenerator {
     return JSON.stringify(json, null, pretty)
   }
 
-  static mapToRule = ({ keyCode, app }) => (
-    {
-      description: `hyper + ${keyCode} for ${app}`,
+  static mapToRule = ({ keyCode, app }) => {
+    const appPath = resolveAppPath(app)
+
+    return {
+      description: `hyper + ${keyCode} for ${appPath}`,
       manipulators: [
         {
           type: 'basic',
@@ -29,11 +32,11 @@ export default class JSONGenerator {
           },
           to: [
             {
-              shell_command: `open '/Applications/${app}.app'`
+              shell_command: `open '${appPath}'`
             }
           ]
         }
       ]
     }
-  )
+  }
 }
