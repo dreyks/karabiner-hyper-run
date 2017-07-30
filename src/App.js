@@ -22,7 +22,7 @@ const EMPTY_MAPPING = { hotkey: '', app: '' }
 
 class App extends Component {
   state = {
-    keyMappings: [{ hotkey: '', app: '' }]
+    keyMappings: [EMPTY_MAPPING]
   }
 
   storage = new Storage()
