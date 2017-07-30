@@ -13,7 +13,7 @@ import ResultsPanel from './components/ResultsPanel'
 import MappingsForm from './components/MappingsForm'
 import JSONGenerator from './lib/JSONGenerator'
 import Storage from './lib/FileIOStorage'
-import validate, { isMappingStarted, isMappingFinished } from './utils/validateMappings'
+import validate, { isMappingStarted, isMappingFinished } from './lib/utils/validateMappings'
 
 const GITHUB_REPO_URL = 'https://github.com/dreyks/karabiner-hyper-run'
 const KARABINER_URL = 'https://github.com/tekezo/Karabiner-Elements'

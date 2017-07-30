@@ -1,4 +1,4 @@
-import { isMappingFinished } from '../utils/validateMappings'
+import { isMappingFinished } from './utils/validateMappings'
 
 export default class JSONGenerator {
   static render(data, { pretty = null } = {}) {
