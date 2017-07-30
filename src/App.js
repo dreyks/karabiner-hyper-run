@@ -11,6 +11,7 @@ import 'bootstrap-css-only'
 import Debug from './components/Debug'
 import ResultsPanel from './components/ResultsPanel'
 import MappingsForm from './components/MappingsForm'
+import JSONGenerator from './lib/JSONGenerator'
 import validate, { isMappingStarted, isMappingFinished } from './utils/validateMappings'
 
 const GITHUB_REPO_URL = 'https://github.com/dreyks/karabiner-hyper-run'
@@ -50,7 +51,7 @@ class App extends Component {
               onImportClick={this.onImportClick}
             />
           </Row>
-          <Row><Debug data={() => this.generateJSON(true)} /></Row>
+          <Row><Debug data={() => JSONGenerator.render(this.state.keyMappings, { pretty: 2 })} /></Row>
         </Grid>
       </div>
     )
@@ -80,47 +81,11 @@ class App extends Component {
   onImportClick = async () => {
     if (!validate(this.state.keyMappings)) return //TODO: show error
 
-    const jsonUrl = await this.saveFile(this.generateJSON())
+    const jsonUrl = await this.saveFile(JSONGenerator.render(this.state.keyMappings))
     if (!jsonUrl) return //TODO: show error
 
     window.location.href = `${KARABINER_IMPORT_URL}${encodeURIComponent(jsonUrl)}`
   }
-
-  generateJSON(pretty = false) {
-    const json = {
-      'title': 'Launch apps by hyper+letters.',
-      'rules': this.state.keyMappings.filter(isMappingFinished).map(this.mapToRule)
-    }
-
-    return JSON.stringify(json, null, pretty ? 2 : null)
-  }
-
-  mapToRule = ({ hotkey, app }) => (
-    {
-      description: `hyper + ${hotkey} for ${app}`,
-      manipulators: [
-        {
-          type: 'basic',
-          from: {
-            key_code: hotkey,
-            modifiers: {
-              mandatory: [
-                'control',
-                'command',
-                'option',
-                'shift'
-              ]
-            }
-          },
-          to: [
-            {
-              shell_command: `open '/Applications/${app}.app'`
-            }
-          ]
-        }
-      ]
-    }
-  )
 
   async saveFile(content) {
     const file = new Blob([content], { type: 'text/plain' })
